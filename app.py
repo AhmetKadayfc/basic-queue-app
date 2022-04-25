@@ -18,21 +18,21 @@ def queue_controller(work_queue: Queue):
             print(f'Queue size: {work_queue.qsize()}')
             task = work_queue.get()
 
-            task_thread = Thread(target=task, daemon=True)
+            task_thread = Thread(target=task['func'], args=(*task['args'],), daemon=True)
             task_thread.start()
             task_thread.join()
             work_queue.task_done()
         print('----------------------')
 
 
-def blocker_task_controller(func: Callable[..., None], work_queue: Queue):
+def blocker_task_controller(func: Callable[..., None], work_queue: Queue, *args):
     global blocking
-
+    task = {'func': func, 'args': args}
     if blocking:
-        work_queue.put(func)
+        work_queue.put(task)
         print('task added to queue')
     else:
-        work_thread = Thread(target=func, daemon=True)
+        work_thread = Thread(target=func, args=(*args,), daemon=True)
         work_thread.start()
         work_thread.join()
 
@@ -58,13 +58,13 @@ def main():
     # Create the queue of work
     worker_queue = Queue()
 
-    blocker_task_controller(task_1, worker_queue)
+    blocker_task_controller(task_1, worker_queue, 23)
 
     Thread(target=blocker_task, args=(worker_queue,)).start()
     time.sleep(0.3)
     
     # Put some work in the queue
-    blocker_task_controller(task_2, worker_queue)
+    blocker_task_controller(task_2, worker_queue, 12, 21)
     blocker_task_controller(task_3, worker_queue)
 
 

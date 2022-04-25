@@ -6,6 +6,7 @@
 
 ```
 Task 1 running
+Number is 23
 Task 1 accomplished!
 Blocking
 task added to queue
@@ -15,6 +16,7 @@ Queue running
 ----------------------
 Queue size: 2
 Task 2 running
+Sum: 33
 Task 2 accomplished!
 Queue size: 1
 Task 3 running
